@@ -1,56 +1,65 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function AdminLoginPage() {
+export default function AdminMessages() {
   const router = useRouter();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const u = username.trim();
-    const p = password.trim();
-
-    console.log("USERNAME:", u);
-    console.log("PASSWORD:", p);
-
-    if (u === "admin" && p === "admin123") {
-      document.cookie = "admin-auth=true; path=/";
-      router.push("/admin/messages");
-    } else {
-      setError(`Invalid login (got "${u}" / "${p}")`);
+  // 🔐 CHECK LOGIN ON LOAD
+  useEffect(() => {
+    const loggedIn = localStorage.getItem("adminLoggedIn");
+    if (!loggedIn) {
+      router.push("/admin/login");
+      return;
     }
-  };
+
+    fetchMessages();
+  }, []);
+
+  async function fetchMessages() {
+    const res = await fetch("/api/messages");
+    const data = await res.json();
+    setMessages(data);
+    setLoading(false);
+  }
+
+  async function deleteMessage(id) {
+    await fetch(`/api/delete-message?id=${id}`, { method: "DELETE" });
+    fetchMessages();
+  }
+
+  function logout() {
+    localStorage.removeItem("adminLoggedIn");
+    router.push("/admin/login");
+  }
+
+  if (loading) return <p>Loading...</p>;
 
   return (
-    <div style={{ maxWidth: "400px", margin: "100px auto" }}>
-      <h1>Admin Login</h1>
+    <div style={{ padding: 20 }}>
+      <h1>Admin Messages</h1>
 
-      <form onSubmit={handleSubmit} autoComplete="off">
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          autoComplete="off"
-        />
+      <button onClick={logout} style={{ marginBottom: 20 }}>
+        Logout
+      </button>
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          autoComplete="off"
-        />
+      {messages.length === 0 && <p>No messages</p>}
 
-        <button type="submit">Sign in</button>
-      </form>
+      {messages.map((msg) => (
+        <div
+          key={msg.id}
+          style={{ border: "1px solid #ccc", padding: 10, marginBottom: 10 }}
+        >
+          <p><b>Name:</b> {msg.name}</p>
+          <p><b>Email:</b> {msg.email}</p>
+          <p>{msg.message}</p>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+          <button onClick={() => deleteMessage(msg.id)}>Delete</button>
+        </div>
+      ))}
     </div>
   );
 }

@@ -3,59 +3,45 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function AdminLoginPage() {
+export default function AdminLogin() {
   const router = useRouter();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [user, setUser] = useState("");
+  const [pass, setPass] = useState("");
 
-  async function handleSubmit(e) {
+  function handleLogin(e) {
     e.preventDefault();
-    setError("");
 
-    const res = await fetch("/api/admin/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    });
+    if (user === "admin" && pass === "admin123") {
+      localStorage.setItem("adminLoggedIn_v2", "true");
 
-    if (res.ok) {
-      // ✅ REDIRECT AFTER LOGIN
       router.push("/admin/messages");
     } else {
-      setError("Invalid login");
+      alert("Wrong login");
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <form
-        onSubmit={handleSubmit}
-        className="border p-6 rounded w-80 space-y-4"
-      >
-        <h1 className="text-xl font-bold">Admin Login</h1>
+    <form onSubmit={handleLogin} style={{ maxWidth: 400, margin: "50px auto" }}>
+      <h1>Admin Login</h1>
 
-        {error && <p className="text-red-500">{error}</p>}
+      <input
+        placeholder="Username"
+        value={user}
+        onChange={(e) => setUser(e.target.value)}
+        style={{ width: "100%", padding: 10, marginBottom: 10 }}
+      />
 
-        <input
-          className="border p-2 w-full"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
+      <input
+        type="password"
+        placeholder="Password"
+        value={pass}
+        onChange={(e) => setPass(e.target.value)}
+        style={{ width: "100%", padding: 10, marginBottom: 10 }}
+      />
 
-        <input
-          className="border p-2 w-full"
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-
-        <button className="bg-indigo-600 text-white w-full py-2 rounded">
-          Login
-        </button>
-      </form>
-    </div>
+      <button style={{ width: "100%", padding: 10 }}>
+        Login
+      </button>
+    </form>
   );
 }
