@@ -4,42 +4,31 @@ import { useState } from "react";
 
 export default function ContactPage() {
   const [success, setSuccess] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    const form = e.currentTarget; // ✅ store reference immediately
-    setLoading(true);
-
+    const form = e.currentTarget;
     const formData = new FormData(form);
 
-    try {
-      const res = await fetch("/api/contactdata", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: formData.get("name"),
-          email: formData.get("email"),
-          message: formData.get("message"),
-        }),
-      });
+    const message = {
+      id: Date.now(),
+      name: formData.get("name"),
+      email: formData.get("email"),
+      message: formData.get("message"),
+      date: new Date().toLocaleString(),
+    };
 
-      const data = await res.json();
+    const existing =
+      JSON.parse(localStorage.getItem("adminMessages") || "[]");
 
-      if (data.success) {
-        form.reset(); // ✅ safe now
-        setSuccess(true);
-      } else {
-        alert("Something went wrong");
-      }
-    } catch (err) {
-      alert("Network error");
-    } finally {
-      setLoading(false);
-    }
+    localStorage.setItem(
+      "adminMessages",
+      JSON.stringify([message, ...existing])
+    );
+
+    form.reset();
+    setSuccess(true);
   }
 
   return (
@@ -47,34 +36,12 @@ export default function ContactPage() {
       <h1 className="text-3xl font-bold mb-6">Contact Me</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          name="name"
-          placeholder="Your name"
-          className="w-full border p-3 rounded"
-          required
-        />
+        <input name="name" placeholder="Your name" required className="w-full border p-3 rounded" />
+        <input name="email" type="email" placeholder="Your email" required className="w-full border p-3 rounded" />
+        <textarea name="message" placeholder="Your message" rows={5} required className="w-full border p-3 rounded" />
 
-        <input
-          name="email"
-          type="email"
-          placeholder="Your email"
-          className="w-full border p-3 rounded"
-          required
-        />
-
-        <textarea
-          name="message"
-          placeholder="Your message"
-          rows={5}
-          className="w-full border p-3 rounded"
-          required
-        />
-
-        <button
-          disabled={loading}
-          className="bg-indigo-600 text-white px-6 py-3 rounded"
-        >
-          {loading ? "Sending..." : "Send Message"}
+        <button className="bg-indigo-600 text-white px-6 py-3 rounded">
+          Send Message
         </button>
       </form>
 
