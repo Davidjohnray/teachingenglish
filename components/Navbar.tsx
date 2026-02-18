@@ -4,8 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 
 export default function Navbar() {
-
-  const [menuOpen, setMenuOpen] = useState<boolean>(false)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   return (
     <header className="w-full bg-white shadow-md sticky top-0 z-50">
@@ -24,7 +23,7 @@ export default function Navbar() {
           <Link href="/contact" className="hover:text-blue-600">Contact</Link>
 
           <Link
-            href="/trial"
+            href="/free-trial"
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
           >
             Free Trial
@@ -46,29 +45,19 @@ export default function Navbar() {
         <div className="md:hidden bg-white shadow-lg border-t">
           <div className="flex flex-col px-6 py-6 gap-4 text-lg font-semibold">
 
-            <Link href="/courses" onClick={() => setMenuOpen(false)}>
-              Courses
-            </Link>
-
-            <Link href="/pricing" onClick={() => setMenuOpen(false)}>
-              Pricing
-            </Link>
-
-            <Link href="/about" onClick={() => setMenuOpen(false)}>
-              About
-            </Link>
-
-            <Link href="/contact" onClick={() => setMenuOpen(false)}>
-              Contact
-            </Link>
+            <Link href="/courses" onClick={() => setMenuOpen(false)}>Courses</Link>
+            <Link href="/pricing" onClick={() => setMenuOpen(false)}>Pricing</Link>
+            <Link href="/about" onClick={() => setMenuOpen(false)}>About</Link>
+            <Link href="/contact" onClick={() => setMenuOpen(false)}>Contact</Link>
 
             <Link
-              href="/trial"
+              href="/free-trial"
               onClick={() => setMenuOpen(false)}
               className="mt-4 bg-blue-600 text-white text-center py-3 rounded-lg"
             >
               Book Free Trial
             </Link>
+
           </div>
         </div>
       )}

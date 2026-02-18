@@ -17,18 +17,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-white text-gray-900 antialiased">
-
-        {/* Fixed Navbar */}
         <Navbar />
 
-        {/* Page Content */}
         <main className="pt-24 min-h-screen">
           {children}
         </main>
 
-        {/* Global Back Home Button (hidden on /) */}
         <BackHomeButton />
-
       </body>
     </html>
   );
