@@ -22,6 +22,14 @@ export default function Navbar() {
           <Link href="/about" className="hover:text-blue-600">About</Link>
           <Link href="/contact" className="hover:text-blue-600">Contact</Link>
 
+          {/* ✅ ADMIN BUTTON */}
+          <Link
+            href="/admin/messages"
+            className="hover:text-blue-600"
+          >
+            Admin
+          </Link>
+
           <Link
             href="/free-trial"
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
@@ -49,6 +57,14 @@ export default function Navbar() {
             <Link href="/pricing" onClick={() => setMenuOpen(false)}>Pricing</Link>
             <Link href="/about" onClick={() => setMenuOpen(false)}>About</Link>
             <Link href="/contact" onClick={() => setMenuOpen(false)}>Contact</Link>
+
+            {/* ✅ ADMIN BUTTON (MOBILE) */}
+            <Link
+              href="/admin/messages"
+              onClick={() => setMenuOpen(false)}
+            >
+              Admin
+            </Link>
 
             <Link
               href="/free-trial"
