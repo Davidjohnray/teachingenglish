@@ -1,47 +1,61 @@
 "use client";
 
 import { useState } from "react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-export default function AdminLogin() {
+export default function LoginPage() {
   const router = useRouter();
-  const [user, setUser] = useState("");
-  const [pass, setPass] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  function handleLogin(e) {
+  async function handleLogin(e) {
     e.preventDefault();
+    setError("");
 
-    if (user === "admin" && pass === "admin123") {
-      localStorage.setItem("adminLoggedIn_v2", "true");
+    const res = await signIn("credentials", {
+      username,
+      password,
+      redirect: false,
+    });
 
-      router.push("/admin/messages");
-    } else {
-      alert("Wrong login");
+    if (res?.error) {
+      setError("Invalid login details");
+      return;
     }
+
+    router.push("/dashboard");
   }
 
   return (
-    <form onSubmit={handleLogin} style={{ maxWidth: 400, margin: "50px auto" }}>
-      <h1>Admin Login</h1>
+    <div style={{ maxWidth: 400, margin: "100px auto" }}>
+      <h1>Dashboard Sign In</h1>
 
-      <input
-        placeholder="Username"
-        value={user}
-        onChange={(e) => setUser(e.target.value)}
-        style={{ width: "100%", padding: 10, marginBottom: 10 }}
-      />
+      <form onSubmit={handleLogin}>
+        <input
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          style={{ width: "100%", marginBottom: 10 }}
+          required
+        />
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={pass}
-        onChange={(e) => setPass(e.target.value)}
-        style={{ width: "100%", padding: 10, marginBottom: 10 }}
-      />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={{ width: "100%", marginBottom: 10 }}
+          required
+        />
 
-      <button style={{ width: "100%", padding: 10 }}>
-        Login
-      </button>
-    </form>
+        <button style={{ width: "100%" }}>
+          Sign In
+        </button>
+      </form>
+
+      {error && <p style={{ color: "red" }}>{error}</p>}
+    </div>
   );
 }
